@@ -1,0 +1,19 @@
+version: '3.2'
+
+services:
+  mysql:
+    container_name: 'mysql'
+    image: mysql:5.7
+    volumes:
+      - .db:/var/lib/mysql
+    ports:
+      - '3306:3306'
+    networks:
+      - api-network
+    environment:
+      MYSQL_DATABASE: 'vue-adonis'
+      MYSQL_ROOT_PASSWORD: 'root'
+
+networks:
+  api-network:
+    driver: bridge
