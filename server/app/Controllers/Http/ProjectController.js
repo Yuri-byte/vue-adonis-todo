@@ -20,9 +20,14 @@ class ProjectController {
     return project
   }
 
-  async update({ auth, request }) {
+  async update({ auth, request, params }) {
     const user = await auth.getUser()
-    const { id, title } = request.all()
+    const { id } = params
+    const project = await Project.find(id)
+    AuthorizationService.verifyPermission( project, user )
+    project.merge(request.only('title'))
+    await project.save()
+    return project
   }
 
   async destroy({ auth, request, params }) {
