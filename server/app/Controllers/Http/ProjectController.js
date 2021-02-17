@@ -1,6 +1,7 @@
 'use strict'
 
 const Project = use('App/Models/Project')
+const AuthorizationService = use('App/Services/AuthorizationService')
 
 class ProjectController {
   async index({ auth }) {
@@ -8,14 +9,28 @@ class ProjectController {
     return await user.projects().fetch()
   }
 
-  async create({ auth, request }){
+  async create({ auth, request }) {
     const user = await auth.getUser()
     const { title } = request.all()
     const project = new Project()
 
     project.fill({ title })
-    
+
     await user.projects().save(project)
+    return project
+  }
+
+  async update({ auth, request }) {
+    const user = await auth.getUser()
+    const { id, title } = request.all()
+  }
+
+  async destroy({ auth, request, params }) {
+    const user = await auth.getUser()
+    const { id } = params
+    const project = await Project.find(id)
+    AuthorizationService.verifyPermission( project, user )
+    await project.delete()
     return project
   }
 }
